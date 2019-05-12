@@ -5,9 +5,8 @@ import os
 import argparse
 
 class InstagramBot():
-    def __init__(self, email, password,username):
+    def __init__(self, password,username):
         self.browser = webdriver.Chrome()
-        self.email = email
         self.password = password
         self.ur = username
 
@@ -17,7 +16,7 @@ class InstagramBot():
         emailInput = self.browser.find_elements_by_css_selector('form input')[0]
         passwordInput = self.browser.find_elements_by_css_selector('form input')[1]
 
-        emailInput.send_keys(self.email)
+        emailInput.send_keys(self.ur)
         passwordInput.send_keys(self.password)
         passwordInput.send_keys(Keys.ENTER)
         time.sleep(2)
@@ -28,15 +27,19 @@ class InstagramBot():
         for inputt in inputs:
             inputt.send_keys(os.getcwd() + "/h.png")
 
+    def TerminateSession(self):
+        time.sleep(2)
+        self.browser.quit()
+
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--em", required=True, help="your Email")
 ap.add_argument("-u", "--user", required=True, help="your user name")
 ap.add_argument("-p", "--pasw", required=True, help="your password")
 
 args = vars(ap.parse_args())
 
-bot = InstagramBot(args["em"],args["pasw"],args["user"])
+bot = InstagramBot(args["pasw"],args["user"])
 bot.signIn()
 bot.Change_Pic()
+bot.TerminateSession()
