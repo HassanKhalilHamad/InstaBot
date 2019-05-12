@@ -2,13 +2,27 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import os
+import fnmatch
 import argparse
+import random
 
 class InstagramBot():
     def __init__(self, password,username):
         self.browser = webdriver.Chrome()
         self.password = password
         self.ur = username
+
+    def getIMG(self, folder):
+        listOfFiles = os.listdir(folder)
+        L = []  
+        pattern = "*.jpg"
+        pattern1 = "*.jpeg"
+        pattern2 = "*.png"  
+        for entry in listOfFiles:  
+            if fnmatch.fnmatch(entry, pattern) or fnmatch.fnmatch(entry, pattern1) or fnmatch.fnmatch(entry, pattern2):
+             L.append(os.getcwd() + "/"+ entry)
+        PATH = random.choice(L)
+        return PATH
 
     def signIn(self):
         self.browser.get('https://www.instagram.com/accounts/login/')
@@ -21,11 +35,14 @@ class InstagramBot():
         passwordInput.send_keys(Keys.ENTER)
         time.sleep(2)
 
-    def Change_Pic(self):
+    def Change_Pic(self,PATH):
         self.browser.get('https://www.instagram.com/' + self.ur)
         inputs = self.browser.find_elements_by_xpath("//input[@accept = 'image/jpeg,image/png']")
         for inputt in inputs:
-            inputt.send_keys(os.getcwd() + "/h.png")
+            inputt.send_keys(PATH)
+
+    
+    
 
     def TerminateSession(self):
         time.sleep(2)
@@ -41,5 +58,6 @@ args = vars(ap.parse_args())
 
 bot = InstagramBot(args["pasw"],args["user"])
 bot.signIn()
-bot.Change_Pic()
+path = bot.getIMG(os.getcwd())
+bot.Change_Pic(path)
 bot.TerminateSession()
